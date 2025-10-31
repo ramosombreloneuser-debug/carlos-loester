@@ -1,0 +1,177 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  background: #000;
+  perspective: 1200px;
+}
+
+/* Canvas de energia */
+#energy-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+}
+
+/* Brilho dinâmico do cursor */
+#cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,170,255,0.25), rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  filter: blur(30px);
+  z-index: -1;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-top: 8vh;
+}
+
+.profile-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0,170,255,0.5);
+  box-shadow: 0 0 40px rgba(0,160,255,0.3), inset 0 0 10px rgba(0,160,255,0.2);
+  animation: floaty 6s ease-in-out infinite alternate;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-top: 20px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #00bfff, #004b8d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  filter: drop-shadow(0 0 10px rgba(0,160,255,0.4));
+}
+
+p {
+  color: #85a2c5;
+  font-weight: 300;
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+
+/* Botões de vidro animados */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.glass-btn {
+  position: relative;
+  display: block;
+  width: 280px;
+  padding: 16px 0;
+  border-radius: 40px;
+  text-decoration: none;
+  overflow: hidden;
+  border: 1px solid rgba(0,170,255,0.3);
+  background: rgba(0,15,25,0.6);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.05em;
+  transition: all 0.5s ease;
+  box-shadow:
+    inset 0 0 10px rgba(0,170,255,0.1),
+    0 0 25px rgba(0,170,255,0.1);
+}
+
+.glass-btn span {
+  position: relative;
+  z-index: 2;
+}
+
+.glass-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(115deg, rgba(0,200,255,0.25), rgba(0,0,0,0));
+  transform: skewX(-30deg);
+  transition: all 0.7s ease;
+  z-index: 1;
+}
+
+.glass-btn:hover::before {
+  left: 130%;
+}
+
+.glass-btn:hover {
+  color: #00baff;
+  border-color: #00baff;
+  box-shadow:
+    0 0 35px rgba(0,180,255,0.4),
+    inset 0 0 15px rgba(0,180,255,0.15);
+  transform: translateY(-3px);
+}
+
+/* Animações de entrada */
+.intro-fade {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: riseIn 1.2s forwards cubic-bezier(0.25, 1, 0.3, 1);
+}
+
+.delay-1 { animation-delay: 0.5s; }
+.delay-2 { animation-delay: 0.9s; }
+
+@keyframes riseIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Flutuação sutil */
+@keyframes floaty {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+
+/* Footer */
+footer {
+  position: absolute;
+  bottom: 30px;
+  text-align: center;
+  width: 100%;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  h1 { font-size: 1.9rem; }
+  .glass-btn { width: 80%; font-size: 1rem; }
+}
