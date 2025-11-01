@@ -1,73 +1,78 @@
-// Fundo dinâmico com movimento fluido de energia
-const canvas = document.getElementById("energy-bg");
-const ctx = canvas.getContext("2d");
+// ===== Canvas: fundo de energia responsivo com DPR =====
+const canvas = document.getElementById('energy-bg');
+const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener('resize', resizeCanvas, { passive: true });
 
 let particles = [];
-const numParticles = 50;
+const NUM = 50;
 
-for (let i = 0; i < numParticles; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 0.5,
-    dx: (Math.random() - 0.5) * 0.8,
-    dy: (Math.random() - 0.5) * 0.8,
-  });
+function seed() {
+  particles = [];
+  for (let i = 0; i < NUM; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.8,
+      dy: (Math.random() - 0.5) * 0.8,
+    });
+  }
 }
+seed();
 
-function drawParticles() {
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const gradient = ctx.createRadialGradient(
-    canvas.width / 2, canvas.height / 2, 0,
-    canvas.width / 2, canvas.height / 2, canvas.width / 1.5
+
+  // fundo radial suave
+  const g = ctx.createRadialGradient(
+    window.innerWidth / 2, window.innerHeight / 2, 0,
+    window.innerWidth / 2, window.innerHeight / 2, Math.max(window.innerWidth, window.innerHeight) * 0.75
   );
-  gradient.addColorStop(0, "#00142b");
-  gradient.addColorStop(1, "#000000");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  g.addColorStop(0, '#00142b');
+  g.addColorStop(1, '#000000');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
   particles.forEach(p => {
     p.x += p.dx;
     p.y += p.dy;
+    if (p.x < 0 || p.x > window.innerWidth) p.dx *= -1;
+    if (p.y < 0 || p.y > window.innerHeight) p.dy *= -1;
 
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-
-    ctx.beginPath();
     const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 8);
-    glow.addColorStop(0, "rgba(0,160,255,0.6)");
-    glow.addColorStop(1, "rgba(0,0,0,0)");
+    glow.addColorStop(0, 'rgba(0,160,255,0.6)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow;
+    ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
     ctx.fill();
   });
-  requestAnimationFrame(drawParticles);
+
+  requestAnimationFrame(draw);
 }
-drawParticles();
+draw();
 
-// Brilho ambiente segue o cursor (e o toque no mobile)
-const cursorGlow = document.getElementById("cursor-glow");
+// ===== Brilho segue cursor (desativado em dispositivos touch) =====
+const cursorGlow = document.getElementById('cursor-glow');
+const isTouch = matchMedia('(pointer: coarse)').matches;
 
-function moveGlow(x, y) {
-  cursorGlow.style.left = `${x}px`;
-  cursorGlow.style.top = `${y}px`;
+if (!isTouch) {
+  document.addEventListener('mousemove', e => {
+    cursorGlow.style.left = `${e.clientX}px`;
+    cursorGlow.style.top = `${e.clientY}px`;
+  }, { passive: true });
+} else {
+  cursorGlow.style.display = 'none';
 }
-
-// Mouse
-document.addEventListener("mousemove", e => moveGlow(e.clientX, e.clientY), { passive: true });
-
-// Touch
-document.addEventListener("touchmove", e => {
-  const t = e.touches[0];
-  if (t) moveGlow(t.clientX, t.clientY);
-}, { passive: true });
-
-// Posição inicial (centro)
-moveGlow(window.innerWidth / 2, window.innerHeight / 2);
