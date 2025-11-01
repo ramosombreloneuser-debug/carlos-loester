@@ -18,9 +18,12 @@ body {
 }
 
 /* Dá espaço pra o footer não ficar cortado no final */
-body {
-  padding-bottom: 100px;
-}
+/* Espaço só no mobile pra não cortar o footer */
+@media (max-width: 600px) {
+  body {
+    padding-bottom: 100px;
+  }
+
 
 /* Canvas de energia (fundo) */
 #energy-bg {

@@ -52,9 +52,22 @@ function drawParticles() {
 }
 drawParticles();
 
-// Brilho ambiente segue o cursor
+// Brilho ambiente segue o cursor (e o toque no mobile)
 const cursorGlow = document.getElementById("cursor-glow");
-document.addEventListener("mousemove", e => {
-  cursorGlow.style.left = `${e.clientX}px`;
-  cursorGlow.style.top = `${e.clientY}px`;
-});
+
+function moveGlow(x, y) {
+  cursorGlow.style.left = `${x}px`;
+  cursorGlow.style.top = `${y}px`;
+}
+
+// Mouse
+document.addEventListener("mousemove", e => moveGlow(e.clientX, e.clientY), { passive: true });
+
+// Touch
+document.addEventListener("touchmove", e => {
+  const t = e.touches[0];
+  if (t) moveGlow(t.clientX, t.clientY);
+}, { passive: true });
+
+// Posição inicial (centro)
+moveGlow(window.innerWidth / 2, window.innerHeight / 2);
